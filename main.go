@@ -39,7 +39,7 @@ func main() {
 
 	//webサーバを開始します
 	log.Println("Webサーバを起動します。ポート番号: ", *addr)
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	if err := http.ListenAndServe(*addr, nil); err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
 }
