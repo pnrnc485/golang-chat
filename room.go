@@ -1,10 +1,11 @@
 package main
 
 import (
-	"syscall"
+	_ "syscall"
 	"github.com/gorilla/websocket"
 	"net/http"
 	"log"
+	_ "net/http/cookiejar"
 )
 
 type room struct {
@@ -20,6 +21,17 @@ type room struct {
 
 	//在室している全てのクライアントが保持される
 	clients map[*client]bool
+}
+
+//ヘルパー関数
+func newRoom() *room {
+
+	return  &room{
+		forward: make(chan []type),
+		join: make(chan *client),
+		leave: make(chan  *client),
+		clients: make(map[*client]bool),
+	}
 }
 
 func (r *room) run() {
