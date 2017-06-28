@@ -27,7 +27,7 @@ type room struct {
 func newRoom() *room {
 
 	return  &room{
-		forward: make(chan []type),
+		forward: make(chan []byte),
 		join: make(chan *client),
 		leave: make(chan  *client),
 		clients: make(map[*client]bool),
