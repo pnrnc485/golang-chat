@@ -33,7 +33,6 @@ func main() {
 	flag.Parse()// フラグを解釈する
 
 	r := newRoom()
-	r.traer = trace.New(os.Stdout)
 
 	//ルート
 	http.Handle("/", &templateHandler{filename: "chat.html"})
