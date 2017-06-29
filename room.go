@@ -24,7 +24,7 @@ type room struct {
 	clients map[*client]bool
 
 	//tracerはチャットルーム場で行われた操作のログを受け取ります
-	traer trace.Tracer
+	tracer trace.Tracer
 }
 
 //ヘルパー関数
@@ -35,7 +35,7 @@ func newRoom() *room {
 		join: make(chan *client),
 		leave: make(chan  *client),
 		clients: make(map[*client]bool),
-		traer: traec.off(),
+		tracer: trace.Off(),
 	}
 }
 
@@ -45,26 +45,26 @@ func (r *room) run() {
 		case client := <-r.join:
 			//参加
 			r.clients[client] = true
-			r.traer.Trace("新しいクライアントが参加しました")
+			r.tracer.Trace("新しいクライアントが参加しました")
 		case client := <-r.leave:
 			//退室
 			delete(r.clients, client)
 			close(client.send)
-			r.traer.Trace("クライアントが退室しまいした")
+			r.tracer.Trace("クライアントが退室しまいした")
 		case msg := <-r.forward:
 
-			r.traer.Trace(" -- メッセージを受信しました: ", string(msg))
+			r.tracer.Trace(" -- メッセージを受信しました: ", string(msg))
 			// 全てのクライアントにメッセージを転送
 			for client := range r.clients {
 				select {
 				case client.send <- msg:
 					//メッセージを送信
-					r.traer.Trace(" -- クライアントに送信されました")
+					r.tracer.Trace(" -- クライアントに送信されました")
 				default:
 					//送信に失敗
 					delete(r.clients, client)
 					close(client.send)
-					r.traer.Trace(" -- 送信に失敗しました、　クライアントをクリーンアップします")
+					r.tracer.Trace(" -- 送信に失敗しました、　クライアントをクリーンアップします")
 				}
 			}
 		}

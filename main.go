@@ -7,8 +7,6 @@ import (
 	"html/template"
 	"path/filepath"
 	"flag"
-	"trace"
-	"os"
 )
 
 // temp1は一つのテンプレートを表します
@@ -35,7 +33,7 @@ func main() {
 	r := newRoom()
 
 	//ルート
-	http.Handle("/", &templateHandler{filename: "chat.html"})
+	http.Handle("/chat", MustAuth(&templateHandler{filename: "chat.html"}) )
 	http.Handle("/room", r)
 	go r.run()
 
