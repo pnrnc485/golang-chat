@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"log"
 	_ "net/http/cookiejar"
+	"trace"
 )
 
 type room struct {
@@ -21,6 +22,9 @@ type room struct {
 
 	//在室している全てのクライアントが保持される
 	clients map[*client]bool
+
+	//tracerはチャットルーム場で行われた操作のログを受け取ります
+	traer trace.Tracer
 }
 
 //ヘルパー関数
@@ -40,21 +44,26 @@ func (r *room) run() {
 		case client := <-r.join:
 			//参加
 			r.clients[client] = true
+			r.traer.Trace("新しいクライアントが参加しました")
 		case client := <-r.leave:
 			//退室
 			delete(r.clients, client)
 			close(client.send)
+			r.traer.Trace("クライアントが退室しまいした")
 		case msg := <-r.forward:
 
+			r.traer.Trace(" -- メッセージを受信しました: ", string(msg))
 			// 全てのクライアントにメッセージを転送
 			for client := range r.clients {
 				select {
 				case client.send <- msg:
 					//メッセージを送信
+					r.traer.Trace(" -- クライアントに送信されました")
 				default:
 					//送信に失敗
 					delete(r.clients, client)
 					close(client.send)
+					r.traer.Trace(" -- 送信に失敗しました、　クライアントをクリーンアップします")
 				}
 			}
 		}
