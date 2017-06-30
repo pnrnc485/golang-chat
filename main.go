@@ -7,6 +7,8 @@ import (
 	"html/template"
 	"path/filepath"
 	"flag"
+	"github.com/stretchr/gomniauth"
+	"github.com/stretchr/gomniauth/providers/google"
 )
 
 // temp1は一つのテンプレートを表します
@@ -29,6 +31,12 @@ func main() {
 	//ポート番号
 	var addr = flag.String("addr", ":8080", "アプリケーションのアドレス")
 	flag.Parse()// フラグを解釈する
+
+	//Gomniauthのセットアップ
+	gomniauth.SetSecurityKey(securityKey)
+	gomniauth.WithProviders(
+		google.New(googleClientId, googleSecret,"http://localhost:8080/auth/callback/google"),
+	)
 
 	r := newRoom()
 
