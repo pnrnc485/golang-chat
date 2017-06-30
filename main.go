@@ -9,6 +9,7 @@ import (
 	"flag"
 	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/providers/google"
+	"github.com/stretchr/objx"
 )
 
 // temp1は一つのテンプレートを表します
@@ -22,8 +23,18 @@ type templateHandler struct {
 func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	t.once.Do(func() {
 		t.temp1 = template.Must(template.ParseFiles(filepath.Join("templates", t.filename)))
-})
-	t.temp1.Execute(w, r) // 戻り値はチェックするべき Request情報を添付する
+	})
+
+	data := map[string]interface{} {
+		"Host": r.Host,
+	}
+	if authCookie, err := r.Cookie("auth"); err == nil {
+		userData := objx.MustFromBase64(authCookie.Value)
+		log.Println( userData)
+		data["UserData"] = userData
+	}
+
+	t.temp1.Execute(w, data) // 戻り値はチェックするべき Request情報を添付する
 }
 
 func main() {

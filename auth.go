@@ -60,8 +60,12 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 			"name": user.Name(),
 		}).MustBase64()
 
-		http.SetCookie(w, &http.Cookie{ Name:"auth", Value:authCookieValue, Path:"/"})
-		w.Header()["Location"] = []string{ "/chat" }
+		log.Println(user.Name())
+		http.SetCookie(w, &http.Cookie{
+			Name: "auth",
+			Value: authCookieValue,
+			Path: "/"})
+		w.Header()["Location"] = []string{"/chat"}
 		w.WriteHeader(http.StatusTemporaryRedirect)
 
 	case "login":
