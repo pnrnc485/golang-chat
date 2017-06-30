@@ -5,6 +5,7 @@ import (
 	"strings"
 	"log"
 	"fmt"
+	"github.com/stretchr/gomniauth"
 )
 
 type authHandler struct {
@@ -38,6 +39,17 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch action {
 	case "login":
+		provider, err := gomniauth.Provider(provider)
+		if err != nil {
+			log.Fatalln("認証プロバイダの取得に失敗しました")
+		}
+
+		loginUrl, err := provider.GetBeginAuthURL(nil,nil)
+		if err != nil {
+			log.Fatalln("GetBeginAuthURLの呼び出し中にエラーが発生しました:", provider, "-", err)
+		}
+		w.Header().Set("Location", loginUrl)
+		w.WriteHeader(http.StatusTemporaryRedirect)
 		log.Println("TODO: ログイン処理", provider)
 	default:
 		w.WriteHeader(http.StatusNotFound)
