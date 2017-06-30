@@ -6,6 +6,8 @@ import (
 	"log"
 	"fmt"
 	"github.com/stretchr/gomniauth"
+	_ "golang.org/x/net/websocket"
+	"github.com/stretchr/objx"
 )
 
 type authHandler struct {
@@ -38,6 +40,30 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	provider := segs[3]
 
 	switch action {
+	case "callback":
+		provider, err := gomniauth.Provider(provider)
+		if err != nil {
+			log.Fatalln("認証プロバイダーの取得に失敗しました")
+		}
+
+		creds, err := provider.CompleteAuth(objx.MustFromURLQuery(r.URL.RawQuery))
+		if err != nil {
+			log.Fatalln("認証を完了できませんでした", provider, "-", err)
+		}
+
+		user, err := provider.GetUser(creds)
+		if err != nil {
+			log.Fatalln("ユーザの取得に失敗しました", provider, "- ", err)
+		}
+
+		authCookieValue := objx.New(map[string] interface{} {
+			"name": user.Name(),
+		}).MustBase64()
+
+		http.SetCookie(w, &http.Cookie{ Name:"auth", Value:authCookieValue, Path:"/"})
+		w.Header()["Location"] = []string{ "/chat" }
+		w.WriteHeader(http.StatusTemporaryRedirect)
+
 	case "login":
 		provider, err := gomniauth.Provider(provider)
 		if err != nil {
