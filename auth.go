@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/gomniauth"
 	_ "golang.org/x/net/websocket"
 	"github.com/stretchr/objx"
+	_ "os/user"
 )
 
 type authHandler struct {
@@ -58,6 +59,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 		authCookieValue := objx.New(map[string] interface{} {
 			"name": user.Name(),
+			"avatar_url": user.AvatarURL(),
 		}).MustBase64()
 
 		log.Println(user.Name())
