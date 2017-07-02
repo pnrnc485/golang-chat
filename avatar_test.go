@@ -32,7 +32,7 @@ func TestGravatarAvatar(t *testing.T) {
 		t.Error("GravatarAvatar.GetAvatrURLはエラーを返すべきではありません")
 	}
 
-	if url != "//www.gravatar.com/avatar/0bc83cd571cd1c50ba6f3e8a78ef1346" {
+	if url != "//www.gravatar.com/avatar/0bc83cb571cd1c50ba6f3e8a78ef1346" {
 		t.Errorf("GravatarAvatar.GetAvatrURLが%sという誤った値を返しました", url)
 	}
 }
