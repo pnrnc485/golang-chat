@@ -27,10 +27,13 @@ type room struct {
 
 	//tracerはチャットルーム場で行われた操作のログを受け取ります
 	tracer trace.Tracer
+
+	//アバター情報
+	avatar Avatar
 }
 
 //ヘルパー関数
-func newRoom() *room {
+func newRoom(avatar Avatar) *room {
 
 	return  &room{
 		forward: make(chan *message),
@@ -38,6 +41,7 @@ func newRoom() *room {
 		leave: make(chan  *client),
 		clients: make(map[*client]bool),
 		tracer: trace.New(os.Stdout),
+		avatar: avatar,
 	}
 }
 
