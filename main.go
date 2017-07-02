@@ -54,6 +54,8 @@ func main() {
 	http.Handle("/chat", MustAuth(&templateHandler{filename: "chat.html"}) )
 	http.Handle("/login", &templateHandler{filename: "login.html"})
 	http.HandleFunc("/auth/", loginHandler)
+	http.Handle("/upload", &templateHandler{filename: "upload.html"})
+	http.HandleFunc("/uploader", uploadHandler)
 	http.Handle("/room", r)
 
 	//ログアウトするために、クッキーを削除する
