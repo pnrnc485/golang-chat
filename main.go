@@ -57,6 +57,9 @@ func main() {
 	http.Handle("/upload", &templateHandler{filename: "upload.html"})
 	http.HandleFunc("/uploader", uploadHandler)
 	http.Handle("/room", r)
+	http.Handle("/avatars/",
+		http.StripPrefix("/avatars/",
+			http.FileServer(http.Dir("./avatars"))))
 
 	//ログアウトするために、クッキーを削除する
 	http.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
