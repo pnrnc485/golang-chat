@@ -12,6 +12,9 @@ import (
 	"github.com/stretchr/objx"
 )
 
+//現在アクティブなAvatarの実装 グローバル変数
+var avatars Avatar = UserFileSystemAvatar
+
 // temp1は一つのテンプレートを表します
 type templateHandler struct {
 	once		sync.Once
